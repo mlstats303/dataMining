@@ -43,8 +43,9 @@ def NMI(groundtruthAssignment, algorithmAssignment):
     probIJ = {s: count/float(len(groundtruthAssignment)) for s, count in tbl.iteritems()}
     for i in range(nbAlgCs):
         for j in range(nbGroundCs):
-            pij = probIJ[(i, j)]
-            iCT += (pij * log(pij/(probCi[i] * probTj[j])))
+            pij = probIJ.get((i, j), 0)
+            if pij != 0:
+                iCT += (pij * log(pij/(probCi[i] * probTj[j])))
 
     NMI = iCT/sqrt(Hc * Ht)
     return NMI
