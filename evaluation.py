@@ -12,6 +12,8 @@ def purity(groundtruthAssignment, algorithmAssignment):
     p = 0.0
     for i in range(nbAlgCs):
         l = [tbl[(i, key[1])] for key in tbl.keys() if key[0] == i]
+        if not l:
+            continue
         p += max(l)
 
     purity = p/len(algorithmAssignment)
@@ -29,12 +31,16 @@ def NMI(groundtruthAssignment, algorithmAssignment):
     probCi = [0] * nbAlgCs
     for i in range(nbAlgCs):
         l = [tbl[(i, key[1])]for key in tbl.keys() if key[0] == i]
+        if not l:
+            continue
         probCi[i] = sum(l)/float(len(groundtruthAssignment))
     Hc = -sum([p * log(p) for p in probCi])
 
     probTj = [0] * nbGroundCs
     for j in range(nbGroundCs):
         l = [tbl[(key[0], j)]for key in tbl.keys() if key[1] == j]
+        if not l:
+            continue
         probTj[j] = sum(l)/float(len(groundtruthAssignment))
     Ht = -sum([p * log(p) for p in probTj])
 
