@@ -1,6 +1,5 @@
 from utils import * 
 
-
 def computeSSE(data, centers, clusterID):
     sse = 0 
     nData = len(data) 
@@ -11,25 +10,52 @@ def computeSSE(data, centers, clusterID):
     return sse 
 
 def updateClusterID(data, centers):
-    nData = len(data) 
+    nData = len(data)
+    nCenter = len(centers)
     
     clusterID = [0] * nData
-    
-    # TODO 
-    # assign the closet center to each data point
 
-    
+    infinity = float('inf')
+
+    # assign the closet center to each data point
+    for i in range(nData):
+        x = data[i]
+        minDist = infinity
+        for c in range(nCenter):
+            dist = squaredDistance(x,centers[c])
+            if dist < minDist:
+                clusterID[i] = c
+                minDist = dist
+
     return clusterID
 
 # K: number of clusters 
 def updateCenters(data, clusterID, K):
     nDim = len(data[0])
-    centers = [[0] * nDim for i in range(K)]
+    nData = len(data)
+    nC = [0] * K
 
-    # TODO recompute the centers based on current clustering assignment
+    centers = [[0] * nDim for _ in range(K)]
+
     # If a cluster doesn't have any data points, in this homework, leave it to ALL 0s
+    for i in range(nData):
+        x = data[i]
+        c = clusterID[i]
+        centroid = centers[c]
+        nC[c] += 1
 
-    return centers 
+        for k in range(nDim):
+            centroid[k] += x[k]
+        centers[c] = centroid
+
+    for c in range(K):
+        if nC[c] > 0:
+            centroid = centers[c]
+            for k in range(nDim):
+                centroid[k] /= float(nC[c])
+            centers[c] = centroid
+
+    return centers
 
 def kmeans(data, centers, maxIter = 100, tol = 1e-6):
     nData = len(data) 
@@ -46,8 +72,6 @@ def kmeans(data, centers, maxIter = 100, tol = 1e-6):
             clusterID[i] = i
         return clusterID
 
-    nDim = len(data[0]) 
-    
     lastDistance = 1e100
     
     for iter in range(maxIter):
